@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
+    ../../scripts/display/hyprland/startup.nix
     ( import ../../modules/bundles/system-module-bundle.nix 
       {
         default-user = "luke";
@@ -176,6 +177,7 @@
     discord-canary
     betterdiscordctl
     toybox
+    fd
   ];
 
   # Install fonts
