@@ -7,7 +7,6 @@
   imports = [
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
-    ../../scripts/display/hyprland/startup.nix
     ( import ../../modules/bundles/system-module-bundle.nix 
       {
         default-user = "luke";
@@ -133,6 +132,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    ( import ../../scripts/display/hyprland/hyprland-startup.nix { inherit pkgs; } )
     vim 
     polkit_gnome
     adwaita-icon-theme
