@@ -35,8 +35,12 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     pkgs.git
-    pkgs.neovim
   ];
+
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true;
+  };
 
   programs.git = {
     enable = true;

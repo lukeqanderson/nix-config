@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
+    inputs.sops-nix.nixosModules.sops
     ( import ../../modules/bundles/system-module-bundle.nix 
       {
         default-user = "luke";
@@ -37,7 +38,15 @@
 
   locale-module.enable = true;
 
-  #boot.initrd.luks.devices."luks-7949dacf-5185-4d08-9e97-a9523f2959bd".device = "/dev/disk/by-uuid/7949dacf-5185-4d08-9e97-a9523f2959bd";
+  # Setup sops
+  sops = {
+    defaultSopsFile = ./secrets/secrets.yaml;
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/home/luke/.config/sops/age/keys.txt";
+    secrets."github/auth-token" = {
+      owner = config.users.users.luke.name;
+    };
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’. 
   users.users."luke" = {
@@ -179,6 +188,9 @@
     betterdiscordctl
     toybox
     fd
+    age
+    ssh-to-age
+    sops
   ];
 
   # Install fonts
