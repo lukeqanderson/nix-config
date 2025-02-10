@@ -1,6 +1,6 @@
 { pkgs }: 
   pkgs.writeShellApplication { 
-    name = "startup"; 
+    name = "hyprland-startup"; 
     runtimeInputs = with pkgs; [
       toybox
       waybar

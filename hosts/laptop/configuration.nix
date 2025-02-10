@@ -133,6 +133,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     ( import ../../scripts/display/hyprland/hyprland-startup.nix { inherit pkgs; } )
+    ( import ../../scripts/display/wallpaper/animated-wallpaper.nix { inherit pkgs; } )
     vim 
     polkit_gnome
     adwaita-icon-theme
