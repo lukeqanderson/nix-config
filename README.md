@@ -18,4 +18,6 @@ github:
   auth-token: <auth-token>
 ```
 
+to use secrets run ```sudo cat /run/secrets/<secrets-path>```
+
 To rebuild the system, run ```sudo nixos-rebuild --flake /etc/nixos#default```
