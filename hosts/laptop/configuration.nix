@@ -7,7 +7,6 @@
   imports = [
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
-    # inputs.nixvim.nixosModules.nixvim
     inputs.sops-nix.nixosModules.sops
     ( import ../../modules/bundles/system-module-bundle.nix 
       {
@@ -39,8 +38,7 @@
 
   locale-module.enable = true;
 
-  # Setup nixvim
-  # programs.nixvim.enable = true;
+  nixvim-module.enable = true;
 
   # Setup sops
   sops = {
