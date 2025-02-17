@@ -13,6 +13,7 @@
     ../system-modules/hardware-support/xserver-module.nix
     ../system-modules/display/portal-module.nix
     ../system-modules/startup/systemd-boot-module.nix
+    ../system-modules/editors/nixvim-module.nix
     ( import ../system-modules/startup/auto-login-module.nix { default-user = default-user; } )
     ( import ../system-modules/connectivity/networking-module.nix { host-name = host-name; } )
     ( import ../system-modules/locale/time-zone-module.nix { time-zone = time-zone; } )

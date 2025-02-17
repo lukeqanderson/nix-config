@@ -7,6 +7,7 @@
   imports = [
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
+    # inputs.nixvim.nixosModules.nixvim
     inputs.sops-nix.nixosModules.sops
     ( import ../../modules/bundles/system-module-bundle.nix 
       {
@@ -37,6 +38,9 @@
   time-zone-module.enable = true;
 
   locale-module.enable = true;
+
+  # Setup nixvim
+  # programs.nixvim.enable = true;
 
   # Setup sops
   sops = {
@@ -174,7 +178,6 @@
     qt6.qtwayland
     adwaita-qt
     adwaita-qt6
-    git
     alacritty
     rofi-wayland
     hyprland
@@ -191,6 +194,9 @@
     age
     ssh-to-age
     sops
+    mullvad
+    btop
+    git
   ];
 
   # Install fonts
