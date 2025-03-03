@@ -195,6 +195,7 @@
     mullvad
     btop
     git
+    unzip
   ];
 
   # Install fonts
