@@ -14,6 +14,7 @@
       firewall = {
         enable = true;
       };
+      nameservers = ["194.242.2.9" "9.9.9.9"];
     };
 
     environment.systemPackages = with pkgs; [

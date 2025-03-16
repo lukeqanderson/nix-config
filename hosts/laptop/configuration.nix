@@ -196,6 +196,10 @@
     btop
     git
     unzip
+    yubikey-manager
+    yubikey-personalization-gui
+    tmux
+    bc
   ];
 
   # Install fonts
