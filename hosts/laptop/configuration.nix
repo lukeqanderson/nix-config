@@ -138,6 +138,9 @@
     # Enable the OpenSSH daemon.
     openssh.enable = true;
 
+    # Enable mullvad VPN
+    mullvad-vpn.enable = true;
+
   };
 
   # List packages installed in system profile. To search, run:
@@ -200,6 +203,8 @@
     yubikey-personalization-gui
     tmux
     bc
+    qbittorrent
+    vlc
   ];
 
   # Install fonts
