@@ -18,10 +18,10 @@
   };
 
   outputs = { self, nixpkgs, sops-nix, ... }@inputs: {
-    nixosConfigurations.default = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.laptop = nixpkgs.lib.nixosSystem {
       specialArgs = {inherit inputs;};
       modules = [
-        ./hosts/laptop/configuration.nix
+        ./configuration.nix
         inputs.home-manager.nixosModules.default
         sops-nix.nixosModules.sops
       ];
