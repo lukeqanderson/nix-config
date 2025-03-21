@@ -2,27 +2,74 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, main-user, ... }:
+{ config, pkgs, inputs, lib, main-user, ... }:
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      inputs.home-manager.nixosModules.default
-    ];
+  imports = [ 
+    ./hardware-configuration.nix
+    ./persist.nix
+    inputs.sops-nix.nixosModules.sops
+    ( import ../../modules/bundles/system-module-bundle.nix 
+      {
+        default-user = "luke";
+        host-name = "nixlaptop";
+        time-zone = "America/Los_Angeles";
+        locale = "en_US.UTF-8";
+        luks-link = "";
+        luks-disk-link = "";
+      }
+    )
+  ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  bluetooth-module.enable = true;
 
-  boot.initrd.luks.devices."luks-7949dacf-5185-4d08-9e97-a9523f2959bd".device = "/dev/disk/by-uuid/7949dacf-5185-4d08-9e97-a9523f2959bd";
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking-module.enable = true;
+  
+  xserver-module.enable = false;
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  xserver-module-no-dl.enable = true;
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  auto-login-module.enable = true;
+
+  portal-module.enable = true;
+
+  systemd-boot-module.enable = true;
+
+  luks-module.enable = false;
+
+  time-zone-module.enable = true;
+
+  locale-module.enable = true;
+
+  nixvim-module.enable = true;
+
+  # This will add each flake input as a registry
+  # To make nix3 commands consistent with your flake
+  nix.registry = (lib.mapAttrs (_: flake: { inherit flake; })) ((lib.filterAttrs (_: lib.isType "flake")) inputs);
+
+  # This will additionally add your inputs to the system's legacy channels
+  # Making legacy nix commands consistent as well
+  nix.nixPath = [ "/etc/nix/path" ];
+
+  environment.etc =
+    lib.mapAttrs'
+      (name: value: {
+        name = "nix/path/${name}";
+        value.source = value.flake;
+      })
+      config.nix.registry;
+
+  # Allow experimental features
+  nix.settings = {
+    experimental-features = "nix-command flakes";
+    auto-optimise-store = true;
+  };
+  
+  # Allow unfree packages
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
@@ -46,33 +93,13 @@
   users.users."luke" = {
     isNormalUser = true;
     description = "admin user";
+    initialHashedPassword = "$6$LgAICPr0K2AXPU1L$qvEdIkNu5eU1nkidV8NCox1XwBN43No1T3CT0xQpQtQpezH3RpO7uo7nnDYw/gQI9S4/9wrcgbRsDJcSKaHQv0";
     extraGroups = [ 
       "wheel" 
       "networkmanager" 
       "systemd-journal"
     ];
-    packages = with pkgs; [
-
-    ];
   };
-
-  # Home-manger setup 
-  home-manager = {
-    extraSpecialArgs = { inherit inputs; };
-    users = {
-      "luke" = import ./home.nix;
-    };
-  };
-
-  # Allow unfree packages
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
-
-  # Allow experimental features
-  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Enable hyprland
   programs = {
@@ -91,18 +118,6 @@
     };
   };
 
-  # XDG Portals
-  xdg = {
-    autostart.enable = true;
-    portal = {
-      enable = true;
-      extraPortals = [
-        pkgs.xdg-desktop-portal
-        pkgs.xdg-desktop-portal-gtk
-      ];
-    };
-  };
-
   # Security
   security = {
     pam.services.swaylock = {
@@ -115,23 +130,6 @@
 
   # Services
   services = {
-    xserver = {
-      enable = true;
-      xkb.layout = "us";
-      xkb.variant = "";
-      excludePackages = [ pkgs.xterm ];
-      videoDrivers = [ "displaylink" "modesetting" ];
-      displayManager.gdm = {
-        enable = true;
-        wayland = true;
-      };
-    };
-
-    # Enable auto login
-    displayManager = {
-      autoLogin.enable = true;
-      autoLogin.user = "luke";
-    };
 
     dbus.enable = true;
 
@@ -141,7 +139,6 @@
 
     # Enable gnome
     gnome = {
-      sushi.enable = true;
       gnome-keyring.enable = true;
     };
 
@@ -154,28 +151,19 @@
       jack.enable = true;
     };
 
-    # Enable bluetooth
-    blueman.enable = true;
-
-    # Enable touchpad support
-    libinput.enable = true;
-
     # Enable the OpenSSH daemon.
     openssh.enable = true;
 
+    # Enable mullvad VPN
+    mullvad-vpn.enable = true;
   };
 
-
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-
-  # Enable sound with pipewire
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    ( import ../../scripts/display/hyprland/hyprland-startup.nix { inherit pkgs; } )
+    ( import ../../scripts/display/wallpaper/animated-wallpaper.nix { inherit pkgs; } )
     vim 
     polkit_gnome
     adwaita-icon-theme
@@ -207,23 +195,32 @@
     qt6.qtwayland
     adwaita-qt
     adwaita-qt6
-    git
     alacritty
     rofi-wayland
     hyprland
     firefox-wayland
     anki
     tree
-    networkmanager
-    networkmanagerapplet
     pavucontrol
-    bluez
-    bluez-tools
-    displaylink
     xwayland
     discord-canary
     betterdiscordctl
     toybox
+    fd
+    age
+    ssh-to-age
+    sops
+    mullvad
+    btop
+    git
+    unzip
+    yubikey-manager
+    yubikey-personalization-gui
+    tmux
+    bc
+    qbittorrent
+    vlc
+    kitty
   ];
 
   # Install fonts
@@ -272,6 +269,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "unstable"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 
 }

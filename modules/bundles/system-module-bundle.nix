@@ -11,6 +11,7 @@
   imports = [
     ../system-modules/connectivity/bluetooth-module.nix
     ../system-modules/hardware-support/xserver-module.nix
+    ../system-modules/hardware-support/xserver-module-no-dl.nix
     ../system-modules/display/portal-module.nix
     ../system-modules/startup/systemd-boot-module.nix
     ../system-modules/editors/nixvim-module.nix

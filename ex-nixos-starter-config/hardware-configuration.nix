@@ -21,7 +21,7 @@
       options = [ "defaults" "size=25%" "mode=755" ];
     };
 
-  fileSystems."/boot" =
+  fileSystems."/boot/efi" =
     {
       device = "/dev/disk/by-uuid/F5D7-5D05";
       fsType = "vfat";

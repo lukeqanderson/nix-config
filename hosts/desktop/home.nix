@@ -71,6 +71,17 @@
     EDITOR = "nvim";
   };
 
+
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    settings = {
+      "$mod" = "SUPER";
+      bind = [
+        "$mod, T, exec, alacritty"
+      ];
+    };
+  };
 }

@@ -26,6 +26,8 @@
   
   xserver-module.enable = true;
 
+  xserver-module-no-dl.enable = false;
+
   auto-login-module.enable = true;
 
   portal-module.enable = true;
